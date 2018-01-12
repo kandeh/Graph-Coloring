@@ -9,9 +9,10 @@ import java.util.ArrayList;
 public class Graph {
     
     private ArrayList<Node> nodes = new ArrayList<Node>();
-    
-    public void addNode(Node node) {
-        nodes.add(node);
+    private int lastIndex = -1;
+    public void addNode(int x, int y) {
+        lastIndex++;
+        nodes.add(new Node(lastIndex, x, y));
     }
     
     public void addBidirectedEdge(Node a, Node b) {
@@ -31,5 +32,5 @@ public class Graph {
     public ArrayList<Node> getNodes() {
         return nodes;
     }
-
+    
 }

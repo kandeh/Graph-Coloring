@@ -14,6 +14,7 @@ import javax.swing.JPanel;
  *
  * @author Alireza
  */
+
 public class GraphDrawerPanel extends JPanel {
     
     public Graph graph = null;
@@ -63,7 +64,7 @@ public class GraphDrawerPanel extends JPanel {
                     }
                 }
                 
-                graph.addNode(new Node(e.getX(), e.getY()));
+                graph.addNode(e.getX(), e.getY());
                 repaint();
             }
 
@@ -104,7 +105,6 @@ public class GraphDrawerPanel extends JPanel {
         
         this.addMouseMotionListener(new MouseMotionAdapter() {
 
-
             @Override
             public void mouseDragged(MouseEvent e) {
                 super.mouseMoved(e);
@@ -124,34 +124,23 @@ public class GraphDrawerPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        
         g.setColor(new Color(0, 0, 0, 20));
-        
         g.fillRect(0, 0, getWidth(), getHeight());
-        
         Node nearNode = null;
-        
-
-        
         g.setColor(Color.cyan);
         if(selectedNode != null) {
-            
             for(Node node : graph.getNodes()) {
                 if(node != selectedNode && Util.getDistance(lastMouseX, lastMouseY, node) <= nodeRadius * 1.5) {
                     nearNode = node;
                 }
             }
-        
             g.fillRect(selectedNode.getX() - nodeRadius, selectedNode.getY() - nodeRadius, 2 * nodeRadius + 1, 2 * nodeRadius + 1);
             g.setColor(Color.orange);
             if(nearNode != null) {
                 g.fillRect(nearNode.getX() - nodeRadius, nearNode.getY() - nodeRadius, 2 * nodeRadius + 1, 2 * nodeRadius + 1);
             }
-
         }
-        
-
-        
+                
         if(selectedNode != null) {
             g.setColor(Color.black);
         
@@ -178,9 +167,7 @@ public class GraphDrawerPanel extends JPanel {
             } else {
                  g.setColor(Color.lightGray);
             }
-            
-            
-            
+
             g.fillOval(node.getX() - nodeRadius, node.getY() - nodeRadius, 2 * nodeRadius, 2 * nodeRadius);
             g.setColor(Color.black);
             g.drawOval(node.getX() - nodeRadius, node.getY() - nodeRadius, 2 * nodeRadius, 2 * nodeRadius);

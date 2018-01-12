@@ -7,6 +7,7 @@ import java.awt.Button;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.HeadlessException;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
@@ -31,7 +32,7 @@ public class GraphCreator extends JFrame {
         this.graph = graph;
         this.setSize(600, 600);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+        this.setTitle("Graph Creator");
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         GraphDrawerPanel dp = new GraphDrawerPanel(graph, true, false);
@@ -57,6 +58,10 @@ public class GraphCreator extends JFrame {
         this.add(panel);
         
         this.pack();
+        
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+        
         this.setVisible(true);
     }
 

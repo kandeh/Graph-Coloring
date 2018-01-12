@@ -1,5 +1,6 @@
 package algorithm;
 
+import com.sun.javafx.collections.ListListenerHelper;
 import graph.Graph;
 import graph.Node;
 import graphCreator.GraphCreator;
@@ -8,6 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -35,14 +38,16 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
     JList<String> populationList = new JList(populationDataModel);
     private Graph graph = null;
     
+    private ArrayList<Chromosome> population = new ArrayList<Chromosome>();
+    private ArrayList<Chromosome> intermediatePopulation = new ArrayList<Chromosome>();
+    
     private final int maxColors = 5;
     
-    
-    public void setColors(Graph graph, Chromosome chromosome) {
-        ArrayList<Node> nodes = graph.getNodes();
-        int colors[] = chromosome.getGenes();
-        for(int i = 0; i < nodes.size(); i++) {
-            nodes.get(i).setColor(colors[i]);
+    public void setPopulationDataModel() {
+        populationDataModel.clear();
+        Util.sort(population);
+        for(Chromosome ch : population) {
+            populationDataModel.addElement(ch);
         }
     }
     
@@ -61,7 +66,7 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
                     return;
                 }
                 Chromosome ch = populationDataModel.get(populationList.getSelectedIndex());
-                setColors(graph, ch);
+                Util.setColors(graph, ch);
                 repaint();
                 //System.out.println(ch);
             }
@@ -69,7 +74,8 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
 
         JPanel buttonsPanel = new JPanel();
         JButton editGraphBtn = new JButton("Edit Graph");
-        JButton initialPopulation = new JButton("Generate Initial Population");
+        JButton initialPopulationBtn = new JButton("Generate Initial Population");
+        JButton nextGenerationBtn = new JButton("Next Generation");
         
         editGraphBtn.addActionListener(new ActionListener() {
             @Override
@@ -80,18 +86,28 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
             }
         });
         
-        initialPopulation.addActionListener(new ActionListener() {
+        initialPopulationBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                populationDataModel.clear();
+                intermediatePopulation.clear();
+                population.clear();
                 for(int i = 0; i < 50; i++) {
-                    populationDataModel.addElement(new Chromosome(graph.getNodes().size(), maxColors));
+                    population.add(new Chromosome(graph, graph.getNodes().size(), maxColors));
                 }
+                setPopulationDataModel();
             }
         });
         
+        nextGenerationBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(EvolutionaryAlgorithmFrame.this, "wait for next update");
+            }
+        });        
+        
         buttonsPanel.add(editGraphBtn);
-        buttonsPanel.add(initialPopulation);
+        buttonsPanel.add(initialPopulationBtn);
+        buttonsPanel.add(nextGenerationBtn);
         
         panel.add(pupulationScrollPane);
         
@@ -108,6 +124,10 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
         this.setResizable(false);
         //this.setSize(800, 600);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+        
         this.setVisible(true);
     }
     
