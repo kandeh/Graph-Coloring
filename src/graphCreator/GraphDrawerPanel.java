@@ -17,14 +17,17 @@ public class GraphDrawerPanel extends JPanel {
     
     public Graph graph = null;
     
-    public final int nodeRadius = 15;
+    public final int nodeRadius = 10;
     
     private Node selectedNode = null;
     
     private int lastMouseX = 0;
     private int lastMouseY = 0;
     
-    public GraphDrawerPanel(Graph graph) {
+    private boolean editable = true;
+    
+    public GraphDrawerPanel(Graph graph, boolean editable) {
+        this.editable = editable;
         this.graph = graph;
         
         this.setVisible(true);
@@ -35,6 +38,11 @@ public class GraphDrawerPanel extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mouseClicked(e);
+                
+                if(editable == false) {
+                    return;
+                }
+                
                 lastMouseX = e.getX();
                 lastMouseY = e.getY();
                 selectedNode = null;
@@ -59,6 +67,11 @@ public class GraphDrawerPanel extends JPanel {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
+                
+                if(editable == false) {
+                    return;
+                }
+                
                 lastMouseX = e.getX();
                 lastMouseY = e.getY();
                 
@@ -68,7 +81,7 @@ public class GraphDrawerPanel extends JPanel {
                 }
                 Node toSelectedNode = null;
                 for(Node node : graph.getNodes()) {
-                    if(Util.getDistance(e.getX(), e.getY(), node) <= nodeRadius) {
+                    if(Util.getDistance(e.getX(), e.getY(), node) <= nodeRadius * 1.5) {
                         toSelectedNode = node;
                     }
                 }
@@ -92,19 +105,27 @@ public class GraphDrawerPanel extends JPanel {
             @Override
             public void mouseDragged(MouseEvent e) {
                 super.mouseMoved(e);
+                
+                if(editable == false) {
+                    return;
+                }
+                
                 lastMouseX = e.getX();
                 lastMouseY = e.getY();
                 repaint();
             }
 
         });
-        
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
+        
+        g.setColor(new Color(0, 0, 0, 20));
+        
+        g.fillRect(0, 0, getWidth(), getHeight());
+        
         Node nearNode = null;
         
 

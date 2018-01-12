@@ -1,5 +1,6 @@
 package app;
 
+import algorithm.EvolutionaryAlgorithmFrame;
 import graphCreator.GraphCreator;
 
 /**

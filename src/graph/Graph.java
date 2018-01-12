@@ -31,5 +31,5 @@ public class Graph {
     public ArrayList<Node> getNodes() {
         return nodes;
     }
-    
+
 }
