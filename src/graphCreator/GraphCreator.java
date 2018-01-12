@@ -34,7 +34,7 @@ public class GraphCreator extends JFrame {
         
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        GraphDrawerPanel dp = new GraphDrawerPanel(graph, true);
+        GraphDrawerPanel dp = new GraphDrawerPanel(graph, true, false);
         dp.setPreferredSize(new Dimension(600, 600));
         panel.add(dp);
         

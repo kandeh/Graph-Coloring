@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.ArrayList;
 import javax.swing.JPanel;
 
 /**
@@ -25,10 +26,12 @@ public class GraphDrawerPanel extends JPanel {
     private int lastMouseY = 0;
     
     private boolean editable = true;
+    private boolean paintColors = false;
     
-    public GraphDrawerPanel(Graph graph, boolean editable) {
+    public GraphDrawerPanel(Graph graph, boolean editable, boolean paintColors) {
         this.editable = editable;
         this.graph = graph;
+        this.paintColors = paintColors;
         
         this.setVisible(true);
         
@@ -169,7 +172,15 @@ public class GraphDrawerPanel extends JPanel {
         
         
         for(Node node : graph.getNodes()) {
-            g.setColor(Color.lightGray);
+            
+            if(paintColors) {
+                g.setColor(colors_list.get(node.getColor()));
+            } else {
+                 g.setColor(Color.lightGray);
+            }
+            
+            
+            
             g.fillOval(node.getX() - nodeRadius, node.getY() - nodeRadius, 2 * nodeRadius, 2 * nodeRadius);
             g.setColor(Color.black);
             g.drawOval(node.getX() - nodeRadius, node.getY() - nodeRadius, 2 * nodeRadius, 2 * nodeRadius);
@@ -177,4 +188,31 @@ public class GraphDrawerPanel extends JPanel {
             
     }
     
+    
+    private static Color colors[] = {
+    		new Color(255, 000, 000),
+    		new Color(000, 250, 000),
+    		new Color(000, 000, 250),
+    		new Color(255, 255, 000),
+    		new Color(255, 000, 255),
+    		new Color(000, 255, 255),
+    		new Color(128, 000, 000),
+    		new Color(000, 128, 000),
+    		new Color(000, 000, 128),
+    		new Color(128, 128, 000),
+    		new Color(128, 000, 128),
+    		new Color(000, 128, 128),
+    		
+    };
+    
+    public static ArrayList<Color> colors_list = new ArrayList<>();
+    
+    static {
+    	for(int i = 0; i < colors.length; i++) {
+    		colors_list.add(colors[i]);
+    	}
+    	for(int i = 0; i < 350; i++) {
+    		colors_list.add(new Color((int)( Math.random() * 255), (int)( Math.random() * 255), (int)( Math.random() * 255)));
+    	}
+    }
 }

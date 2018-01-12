@@ -1,6 +1,7 @@
 package algorithm;
 
 import graph.Graph;
+import graph.Node;
 import graphCreator.GraphCreator;
 import graphCreator.GraphDrawerPanel;
 import java.awt.BorderLayout;
@@ -17,6 +18,11 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SingleSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  *
@@ -25,29 +31,47 @@ import javax.swing.JScrollPane;
 
 public class EvolutionaryAlgorithmFrame extends JFrame {
 
-    DefaultListModel<String> populationDataModel = new DefaultListModel<>();
+    DefaultListModel<Chromosome> populationDataModel = new DefaultListModel<>();
     JList<String> populationList = new JList(populationDataModel);
     private Graph graph = null;
+    
+    private final int maxColors = 5;
+    
+    
+    public void setColors(Graph graph, Chromosome chromosome) {
+        ArrayList<Node> nodes = graph.getNodes();
+        int colors[] = chromosome.getGenes();
+        for(int i = 0; i < nodes.size(); i++) {
+            nodes.get(i).setColor(colors[i]);
+        }
+    }
     
     public EvolutionaryAlgorithmFrame(Graph graph) {
         this.graph = graph;
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         
-        JPanel pupulationPanel = new JPanel();
-        
-        populationList.setPreferredSize(new Dimension(200, 600));
-        pupulationPanel.add(populationList);
-        
-        JScrollPane pupulationScrollPane = new JScrollPane();
-        pupulationScrollPane.setViewportView(populationList);
+        JScrollPane pupulationScrollPane = new JScrollPane(populationList, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        populationList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        populationList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if(e.getValueIsAdjusting() == false) {
+                    return;
+                }
+                Chromosome ch = populationDataModel.get(populationList.getSelectedIndex());
+                setColors(graph, ch);
+                repaint();
+                //System.out.println(ch);
+            }
+        });
 
         JPanel buttonsPanel = new JPanel();
         JButton editGraphBtn = new JButton("Edit Graph");
         JButton initialPopulation = new JButton("Generate Initial Population");
         
         editGraphBtn.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 new GraphCreator(graph);
@@ -61,7 +85,7 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 populationDataModel.clear();
                 for(int i = 0; i < 50; i++) {
-                    populationDataModel.addElement("##################### " + i);
+                    populationDataModel.addElement(new Chromosome(graph.getNodes().size(), maxColors));
                 }
             }
         });
@@ -69,13 +93,12 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
         buttonsPanel.add(editGraphBtn);
         buttonsPanel.add(initialPopulation);
         
-        pupulationPanel.setPreferredSize(populationList.getPreferredSize());
         panel.add(pupulationScrollPane);
         
         buttonsPanel.setPreferredSize(new Dimension(200, 600));
         panel.add(buttonsPanel);
         
-        JPanel gdp = new GraphDrawerPanel(graph, false);
+        JPanel gdp = new GraphDrawerPanel(graph, false, true);
         gdp.setPreferredSize(new Dimension(600, 600));
         panel.add(gdp);
 
