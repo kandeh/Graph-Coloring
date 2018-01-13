@@ -1,10 +1,5 @@
 package algorithm;
 
-import graph.Graph;
-import graph.Node;
-import graphCreator.Util;
-import java.util.ArrayList;
-
 /**
  *
  * @author Alireza
@@ -12,125 +7,58 @@ import java.util.ArrayList;
 
 public class Chromosome {
 
-    private int genes[] = null;
-    private int maxColor = 4;
-    private Graph graph = null;
-    private boolean fitnessCalced = false;
-    private double fitness = 0;
+    protected int genes[] = null;
     
-    public Chromosome(Graph graph, int nodes, int maxColor) {
-        this.graph = graph;
-        this.maxColor = maxColor;
-        genes = new int[nodes];
-        
-        for(int i = 0; i < nodes; i++) {
-            genes[i] = -1;
-        }
-        
-        /*for(int i = 0; i < nodes; i++) {
-            genes[i] = (int) (Math.random() * maxColor);
-        }*/
-
-        for(Node node : graph.getNodes()) {
-            setNodeColor(node);
-        }
-        
+    private boolean isFitnessSetted = false;
+    private double fitness = 0;
+    private boolean isNormalizedFitnessSetted = false;
+    private double normalizedFitness = 0;
+    
+    public Chromosome(int length) {
+        genes = new int[length];
         unsetFitness();
     }
     
-    
-    
-    int arr[] = null;
-    public void setNodeColor(Node node) {
-        
-        if(genes[node.getIndex()] != -1) {
-            return;
-        }
-        
-        boolean limited = false;
-        
-        for(Node toNode : node.edgesTo) {
-            if(genes[toNode.getIndex()] != -1) {
-                limited = true;
-                break;
-            }
-        }
-        
-        if(limited == false) {
-            genes[node.getIndex()] = 0;
-        } else {
-            
-            if(arr == null || arr.length != maxColor) {
-                arr = new int[maxColor];
-            }
-            for(int i = 0; i < maxColor; i++) {
-                arr[i] = 0;
-            }
-            
-            for(Node toNode : node.edgesTo) {
-                for(int i = 0; i < maxColor; i++) {
-                    if(i != genes[toNode.getIndex()]) {
-                        for(int k = 0; k < 1; k++) {
-                            arr[i]++;
-                        }
-                    }
-                }
-            }
-            
-            int maxIndex = 0;
-            for(int i = 0; i < maxColor; i++) {
-                if(arr[i] > arr[maxIndex]) {
-                    maxIndex = i;
-                }
-            }
-            if(Math.random() <= 0.5) {
-                genes[node.getIndex()] = maxIndex;
-            } else {
-                if(Math.random() <= 0.5) {
-                    arr[maxIndex] = 0;
-                    maxIndex = 0;
-                    for(int i = 0; i < maxColor; i++) {
-                        if(arr[i] > arr[maxIndex]) {
-                            maxIndex = i;
-                            genes[node.getIndex()] = maxIndex;
-                        }
-                    }
-                } else {
-                    genes[node.getIndex()] = (int) (Math.random() * maxColor);
-                }
-            }
-        }
-        
-        for(Node toNode : node.edgesTo) {
-            setNodeColor(toNode);
-        }
-        
+    public final void unsetFitness() {
+        this.isFitnessSetted = false;
+        this.fitness = 0;
     }
     
-    public void unsetFitness() {
-        fitnessCalced = false;
-        fitness = 1;
+    public void setFintess(double fitness) {
+        this.isFitnessSetted = true;
+        this.fitness = fitness;
     }
-
-    private double _getFitness() {
-        double res = 0;
-        for(Node node : graph.getNodes()) {
-            for(Node toNode : node.edgesTo) {
-                if(genes[node.getIndex()] == genes[toNode.getIndex()]) {
-                    res++;
-                }
-            }
-        }
-        return res / 2;
+    
+    public boolean isFitnessSetted() {
+        return isFitnessSetted;
     }
     
     public double getFitness() {
-        if(fitnessCalced) {
-            return fitness;
+        if(isFitnessSetted() == false) {
+            (new Exception("fitness is not setted.")).printStackTrace();
         }
-        fitness = _getFitness();
-        fitnessCalced = true;
-        return fitness;
+        return this.fitness;
+    }
+    
+    public final void unsetNormalizedFitness() {
+        this.isNormalizedFitnessSetted = false;
+        this.normalizedFitness = 0;
+    }
+    
+    public void setNormalizedFintess(double normalizedFitness) {
+        this.isNormalizedFitnessSetted = true;
+        this.normalizedFitness = normalizedFitness;
+    }
+    
+    public boolean isNormalizedFitnessSetted() {
+        return isNormalizedFitnessSetted;
+    }
+    
+    public double getNormalizedFitness() {
+        if(isNormalizedFitnessSetted() == false) {
+            (new Exception("normalized fitness is not setted.")).printStackTrace();
+        }
+        return this.normalizedFitness;
     }
     
     public int[] getGenes() {
@@ -139,10 +67,17 @@ public class Chromosome {
     
     @Override
     public String toString() {
-        String res = "fitness = " + getFitness() + " | ";
+        String res = "";
+        if(isFitnessSetted) {
+            res += "fitness = " + getFitness() + " | ";
+        }
+        if(isNormalizedFitnessSetted) {
+            res += "normalizedFitness = " + getNormalizedFitness() + " | ";
+        }
         for(int i = 0; i < genes.length; i++) {
             res += genes[i] + (i < genes.length - 1 ? " , " : "");
         }
         return res;
     }
+    
 }

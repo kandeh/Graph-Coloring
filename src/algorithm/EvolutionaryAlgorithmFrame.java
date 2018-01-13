@@ -38,15 +38,15 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
     JList<String> populationList = new JList(populationDataModel);
     private Graph graph = null;
     
-    private ArrayList<Chromosome> population = new ArrayList<Chromosome>();
-    private ArrayList<Chromosome> intermediatePopulation = new ArrayList<Chromosome>();
     
-    private final int maxColors = 5;
+    private EvolutionaryAlgorithm algorithm = null;
+    
+    private final int maxColor = 3;
     
     public void setPopulationDataModel() {
         populationDataModel.clear();
-        Util.sort(population);
-        for(Chromosome ch : population) {
+        Util.sort(algorithm.getCurrentPopulation());
+        for(Chromosome ch : algorithm.getCurrentPopulation()) {
             populationDataModel.addElement(ch);
         }
     }
@@ -89,14 +89,13 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
         initialPopulationBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                intermediatePopulation.clear();
-                population.clear();
-                for(int i = 0; i < 50; i++) {
-                    population.add(new Chromosome(graph, graph.getNodes().size(), maxColors));
-                }
+ 
+                algorithm = new EvolutionaryAlgorithm(graph, maxColor);
+                algorithm.initiate();
+                
                 setPopulationDataModel();
                 
-                System.out.println("Avg Fitness = " + Util.getAvgFitness(population));
+                System.out.println("Avg Fitness = " + Util.getAvgFitness(algorithm.getCurrentPopulation()));
             }
         });
         
