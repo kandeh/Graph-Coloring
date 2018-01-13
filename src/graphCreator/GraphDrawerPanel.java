@@ -17,9 +17,9 @@ import javax.swing.JPanel;
 
 public class GraphDrawerPanel extends JPanel {
     
-    public Graph graph = null;
+    private Graph graph = null;
     
-    public final int nodeRadius = 10;
+    public final int nodeRadius = 6;
     
     private Node selectedNode = null;
     
@@ -43,6 +43,8 @@ public class GraphDrawerPanel extends JPanel {
             public void mousePressed(MouseEvent e) {
                 super.mouseClicked(e);
                 
+                Graph graph = GraphDrawerPanel.this.graph;
+                
                 if(editable == false) {
                     return;
                 }
@@ -51,7 +53,7 @@ public class GraphDrawerPanel extends JPanel {
                 lastMouseY = e.getY();
                 selectedNode = null;
                 for(Node node : graph.getNodes()) {
-                    if(Util.getDistance(e.getX(), e.getY(), node) <= nodeRadius) {
+                    if(Util.getDistance(e.getX(), e.getY(), node) <= nodeRadius * 2.5) {
                         selectedNode = node;
                         repaint();
                         return;
@@ -71,6 +73,8 @@ public class GraphDrawerPanel extends JPanel {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
+
+                Graph graph = GraphDrawerPanel.this.graph;
                 
                 if(editable == false) {
                     return;
@@ -85,12 +89,14 @@ public class GraphDrawerPanel extends JPanel {
                 }
                 Node toSelectedNode = null;
                 for(Node node : graph.getNodes()) {
-                    if(Util.getDistance(e.getX(), e.getY(), node) <= nodeRadius * 1.5) {
+                    if(Util.getDistance(e.getX(), e.getY(), node) <= nodeRadius * 2.5) {
                         toSelectedNode = node;
                     }
                 }
                 
-                if(toSelectedNode != null &&toSelectedNode != selectedNode) {
+                if(toSelectedNode == null) {
+                    selectedNode.setXY(e.getX(), e.getY());
+                } else if(toSelectedNode != null &&toSelectedNode != selectedNode) {
                     if(graph.isBidirectedEdge(selectedNode, toSelectedNode)) {
                         graph.removeBidirectedEdge(selectedNode, toSelectedNode);
                     } else {
@@ -121,6 +127,16 @@ public class GraphDrawerPanel extends JPanel {
         });
     }
 
+    public Graph getGraph() {
+        return this.graph;
+    }
+    
+    public void setGraph(Graph graph) {
+        selectedNode = null;
+        this.graph = graph;
+        repaint();
+    }
+    
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

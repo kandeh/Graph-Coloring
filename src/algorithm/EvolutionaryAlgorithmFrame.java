@@ -41,7 +41,7 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
     
     private EvolutionaryAlgorithm algorithm = null;
     
-    private final int maxColor = 3;
+    private final int maxColor = 4;
     
     public void setPopulationDataModel() {
         populationDataModel.clear();

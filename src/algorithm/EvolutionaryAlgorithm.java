@@ -28,7 +28,7 @@ public class EvolutionaryAlgorithm {
 
     
     public void initiate() {
-        this.populationSize = 10; // toDo
+        this.populationSize = 70; // toDo
         this.intermediatePopulation.clear();
         this.population.clear();
         new InitialPopulationGenerator(this.graph, this.population, this.populationSize, this.maxColor);

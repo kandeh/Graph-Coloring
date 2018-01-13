@@ -73,9 +73,9 @@ public class InitialPopulationGenerator {
                     for(int i = 0; i < maxColor; i++) {
                         if(arr[i] > arr[maxIndex]) {
                             maxIndex = i;
-                            ch.genes[node.getIndex()] = maxIndex;
                         }
                     }
+                    ch.genes[node.getIndex()] = maxIndex;
                 } else {
                     ch.genes[node.getIndex()] = (int) (Math.random() * maxColor);
                 }

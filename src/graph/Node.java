@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 public class Node {
     
+    public boolean seen = false;
+    
     private int x = 0;
     private int y = 0;
     private int index = 0;
@@ -34,6 +36,11 @@ public class Node {
 
     public int getY() {
         return y;
+    }
+    
+    public void setXY(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
     
     public Node(int index, int x, int y) {
