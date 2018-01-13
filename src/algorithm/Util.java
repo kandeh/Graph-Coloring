@@ -34,4 +34,16 @@ public class Util {
             }
         });
     }
+    
+    
+    public static double getAvgFitness(ArrayList<Chromosome> chromosomes) {
+        double sum = 0;
+        if(chromosomes.isEmpty()) {
+            return 0;
+        }
+        for(Chromosome ch : chromosomes) {
+            sum += ch.getFitness();
+        }
+        return sum / chromosomes.size();
+    }
 }

@@ -95,6 +95,8 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
                     population.add(new Chromosome(graph, graph.getNodes().size(), maxColors));
                 }
                 setPopulationDataModel();
+                
+                System.out.println("Avg Fitness = " + Util.getAvgFitness(population));
             }
         });
         
