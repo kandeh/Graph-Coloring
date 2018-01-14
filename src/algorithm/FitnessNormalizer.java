@@ -15,6 +15,9 @@ public class FitnessNormalizer {
             sum += ch.getFitness();
         }
         if(sum == 0) {
+            for(Chromosome ch : populationArray) {
+                ch.setNormalizedFintess(1);
+            }
             return;
         }
         for(Chromosome ch : populationArray) {

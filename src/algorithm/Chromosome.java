@@ -79,5 +79,20 @@ public class Chromosome {
         }
         return res;
     }
+
+    @Override
+    protected Chromosome clone() {
+        Chromosome result = new Chromosome(this.genes.length);
+        for(int i = 0; i < result.genes.length; i++) {
+            result.genes[i] = this.genes[i];
+        }
+        if(this.isFitnessSetted()) {
+            result.setFintess(this.getFitness());
+        } 
+        return result;
+        
+    }
+    
+    
     
 }

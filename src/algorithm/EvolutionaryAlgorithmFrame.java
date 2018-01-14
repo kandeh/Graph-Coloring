@@ -1,29 +1,21 @@
 package algorithm;
 
-import com.sun.javafx.collections.ListListenerHelper;
 import graph.Graph;
-import graph.Node;
 import graphCreator.GraphCreator;
 import graphCreator.GraphDrawerPanel;
-import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.Dimension;
-import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SingleSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -34,24 +26,64 @@ import javax.swing.event.ListSelectionListener;
 
 public class EvolutionaryAlgorithmFrame extends JFrame {
 
-    DefaultListModel<Chromosome> populationDataModel = new DefaultListModel<>();
-    JList<String> populationList = new JList(populationDataModel);
+    private DefaultListModel<Chromosome> populationDataModel = new DefaultListModel<>();
+    private JList<String> populationList = new JList(populationDataModel);
     private Graph graph = null;
     
+    private Thread thread = null;
     
+    private JPanel gdp = null;
     private EvolutionaryAlgorithm algorithm = null;
     
-    private final int maxColor = 4;
+    private final int maxColor = 6;
     
+    private JButton editGraphBtn = new JButton("Edit Graph");
+    private JButton initialPopulationBtn = new JButton("Generate Initial Population");
+    private JButton nextGenerationBtn = new JButton("Next Generation");
+    private JButton runBtn = new JButton("Run");
+    private JButton stopBtn = new JButton("Stop");
+        
     public void setPopulationDataModel() {
-        populationDataModel.clear();
-        Util.sort(algorithm.getCurrentPopulation());
-        for(Chromosome ch : algorithm.getCurrentPopulation()) {
-            populationDataModel.addElement(ch);
+
+        synchronized(algorithm.getCurrentPopulation()) {
+            Util.sort(algorithm.getCurrentPopulation());
+            populationDataModel.clear();
+            for(Chromosome ch : algorithm.getCurrentPopulation()) {
+                populationDataModel.addElement(ch);
+            }
+            populationList.setSelectedIndex(0);
+            Util.setColors(graph, algorithm.best);
+            repaint();
         }
     }
     
+    
+    private void nextGeneration() {
+        algorithm.nextGeneration();
+        setPopulationDataModel();
+    }
+
+    class Run implements Runnable {
+        @Override
+        public void run() {
+            try {
+                while(true) {
+                    algorithm.nextGeneration();
+                    Util.setColors(graph, algorithm.best);
+                    repaint();
+                    if(Thread.currentThread().isInterrupted()) {
+                        return;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    
     public EvolutionaryAlgorithmFrame(Graph graph) {
+
         this.graph = graph;
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
@@ -68,18 +100,19 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
                 Chromosome ch = populationDataModel.get(populationList.getSelectedIndex());
                 Util.setColors(graph, ch);
                 repaint();
-                //System.out.println(ch);
             }
         });
 
         JPanel buttonsPanel = new JPanel();
-        JButton editGraphBtn = new JButton("Edit Graph");
-        JButton initialPopulationBtn = new JButton("Generate Initial Population");
-        JButton nextGenerationBtn = new JButton("Next Generation");
+
+        
         
         editGraphBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(EvolutionaryAlgorithmFrame.this.thread != null && EvolutionaryAlgorithmFrame.this.thread.isAlive()) {
+                    EvolutionaryAlgorithmFrame.this.thread.interrupt();
+                }
                 new GraphCreator(graph);
                 EvolutionaryAlgorithmFrame.this.setVisible(false);
                 EvolutionaryAlgorithmFrame.this.dispose();
@@ -89,41 +122,80 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
         initialPopulationBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
- 
+                EvolutionaryAlgorithmFrame.this.runBtn.setEnabled(true);
                 algorithm = new EvolutionaryAlgorithm(graph, maxColor);
                 algorithm.initiate();
-                
                 setPopulationDataModel();
-                
-                System.out.println("Avg Fitness = " + Util.getAvgFitness(algorithm.getCurrentPopulation()));
+
             }
         });
         
         nextGenerationBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(EvolutionaryAlgorithmFrame.this, "wait for next update");
+                nextGeneration();
+                setPopulationDataModel();
             }
-        });        
+        });  
+        
+        EvolutionaryAlgorithmFrame.this.nextGenerationBtn.setEnabled(false);
+        EvolutionaryAlgorithmFrame.this.runBtn.setEnabled(false);
+        EvolutionaryAlgorithmFrame.this.stopBtn.setEnabled(false);
+        
+        runBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                EvolutionaryAlgorithmFrame.this.populationList.setEnabled(false);
+                EvolutionaryAlgorithmFrame.this.populationDataModel.clear();
+                
+                EvolutionaryAlgorithmFrame.this.editGraphBtn.setEnabled(false);
+                EvolutionaryAlgorithmFrame.this.initialPopulationBtn.setEnabled(false);
+                EvolutionaryAlgorithmFrame.this.nextGenerationBtn.setEnabled(false);
+                EvolutionaryAlgorithmFrame.this.runBtn.setEnabled(false);
+                EvolutionaryAlgorithmFrame.this.stopBtn.setEnabled(true);
+                
+                EvolutionaryAlgorithmFrame.this.thread = new Thread(new Run());
+                EvolutionaryAlgorithmFrame.this.thread.start();
+            }
+        });  
+        
+        stopBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                EvolutionaryAlgorithmFrame.this.editGraphBtn.setEnabled(true);
+                EvolutionaryAlgorithmFrame.this.populationList.setEnabled(true);
+                EvolutionaryAlgorithmFrame.this.initialPopulationBtn.setEnabled(true);
+                EvolutionaryAlgorithmFrame.this.nextGenerationBtn.setEnabled(true);
+                EvolutionaryAlgorithmFrame.this.runBtn.setEnabled(true);
+                EvolutionaryAlgorithmFrame.this.stopBtn.setEnabled(false);
+                if(EvolutionaryAlgorithmFrame.this.thread != null && EvolutionaryAlgorithmFrame.this.thread.isAlive()) {
+                    EvolutionaryAlgorithmFrame.this.thread.interrupt();
+                }
+                setPopulationDataModel();
+            }
+        });  
+        
         
         buttonsPanel.add(editGraphBtn);
         buttonsPanel.add(initialPopulationBtn);
         buttonsPanel.add(nextGenerationBtn);
+        buttonsPanel.add(runBtn);
+        buttonsPanel.add(stopBtn);
         
         panel.add(pupulationScrollPane);
         
         buttonsPanel.setPreferredSize(new Dimension(200, 600));
         panel.add(buttonsPanel);
         
-        JPanel gdp = new GraphDrawerPanel(graph, false, true);
+        gdp = new GraphDrawerPanel(graph, false, true);
         gdp.setPreferredSize(new Dimension(600, 600));
         panel.add(gdp);
-
         
         this.add(panel);
         this.pack();
         this.setResizable(false);
-        //this.setSize(800, 600);
+        
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();

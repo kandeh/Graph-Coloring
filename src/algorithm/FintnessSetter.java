@@ -11,22 +11,38 @@ import java.util.ArrayList;
 
 public class FintnessSetter {
 
-    public FintnessSetter(Graph graph, ArrayList<Chromosome> populationArray) {
+    public FintnessSetter(Graph graph, ArrayList<Chromosome> populationArray, int maxColor) {
         for(Chromosome ch : populationArray) {
-            ch.setFintess(getFitness(graph, ch));
+            if(ch.isFitnessSetted() == false) {
+                ch.setFintess(getFitness(graph, ch, maxColor));
+            }
         }
     }
     
-    private double getFitness(Graph graph, Chromosome ch) {
+    private double getFitness(Graph graph, Chromosome ch, int maxColor) {
         double res = 0;
+        int edges = 0;
         for(Node node : graph.getNodes()) {
             for(Node toNode : node.edgesTo) {
+                edges++;
                 if(ch.genes[node.getIndex()] == ch.genes[toNode.getIndex()]) {
                     res++;
                 }
             }
         }
-        return res / 2;
+        if(edges != 0) {
+            res = res / 2;
+            edges = edges / 2;
+            res = (edges - res) / edges;
+        } else {
+            res = 1;
+        }
+
+        int nodes = graph.getNodes().size();
+        
+        return 0.98 * res + 0.02 * ((double) (nodes - Util.getColorsDef(ch, maxColor)) / nodes);
     }
+    
+    
     
 }

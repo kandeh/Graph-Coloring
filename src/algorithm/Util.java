@@ -24,7 +24,16 @@ public class Util {
         Collections.sort(chromosomes, new Comparator<Chromosome>() {
             @Override
             public int compare(Chromosome o1, Chromosome o2) {
-                return Double.compare(o1.getFitness(), o2.getFitness());
+                return Double.compare(o2.getFitness(), o1.getFitness());
+            }
+        });
+    }
+    
+    public static void sortByNormalizedFitness(ArrayList<Chromosome> chromosomes) {
+        Collections.sort(chromosomes, new Comparator<Chromosome>() {
+            @Override
+            public int compare(Chromosome o1, Chromosome o2) {
+                return Double.compare(o2.getNormalizedFitness(), o1.getNormalizedFitness());
             }
         });
     }
@@ -40,4 +49,43 @@ public class Util {
         }
         return sum / chromosomes.size();
     }
+    
+    public static void shuffle(ArrayList<Chromosome> chromosomes) {
+        Collections.shuffle(chromosomes);
+    }
+    
+    private static int __arr[] = null;
+    public static int getColorsDef(Chromosome ch, int maxColor) {
+        if(__arr == null || __arr.length < maxColor) {
+            __arr = new int[maxColor];
+        }
+        for(int i = 0; i < maxColor; i++) {
+            __arr[i] = 0;
+        }
+        for(int i = 0; i < ch.genes.length; i++) {
+            __arr[ch.genes[i]]++;
+        }
+        int minIndex = 0;
+        int maxIndex = 0;
+        for(int i = 0; i < maxColor; i++) {
+            if(__arr[maxIndex] < __arr[i]) {
+                maxIndex = i;
+            }
+        }
+        
+        /*for(int i = 0; i < maxColor; i++) {
+            if(__arr[i] == 0) {
+                __arr[i] = 1000000;
+            }
+        }*/
+        
+        for(int i = 0; i < maxColor; i++) {
+            if(__arr[minIndex] > __arr[i]) {
+                minIndex = i;
+            }
+        }
+        return __arr[maxIndex] - __arr[minIndex];
+    }
+    
+    
 }
