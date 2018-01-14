@@ -35,7 +35,7 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
     private JPanel gdp = null;
     private EvolutionaryAlgorithm algorithm = null;
     
-    private final int maxColor = 6;
+    private final int maxColor = 4;
     
     private JButton editGraphBtn = new JButton("Edit Graph");
     private JButton initialPopulationBtn = new JButton("Generate Initial Population");
