@@ -64,7 +64,11 @@ public class InitialPopulationGenerator {
                     maxIndex = i;
                 }
             }
-            if(Math.random() <= 0.3) {
+            
+            ch.genes[node.getIndex()] = (int) (Math.random() * maxColor);
+            //ch.genes[node.getIndex()] = 0;
+            
+            /*if(Math.random() <= 0.3) {
                 ch.genes[node.getIndex()] = maxIndex;
             } else {
                 if(Math.random() <= 0.3) {
@@ -78,9 +82,8 @@ public class InitialPopulationGenerator {
                     ch.genes[node.getIndex()] = maxIndex;
                 } else {
                     ch.genes[node.getIndex()] = (int) (Math.random() * maxColor);
-                    //ch.genes[node.getIndex()] = 0;
                 }
-            }
+            }*/
         }
         for(Node toNode : node.edgesTo) {
             setNodeColorInChromosome(ch, toNode);

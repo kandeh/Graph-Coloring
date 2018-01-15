@@ -104,9 +104,7 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
         });
 
         JPanel buttonsPanel = new JPanel();
-
-        
-        
+   
         editGraphBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -122,6 +120,7 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
         initialPopulationBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                EvolutionaryAlgorithmFrame.this.nextGenerationBtn.setEnabled(true);
                 EvolutionaryAlgorithmFrame.this.runBtn.setEnabled(true);
                 algorithm = new EvolutionaryAlgorithm(graph, maxColor);
                 algorithm.initiate();

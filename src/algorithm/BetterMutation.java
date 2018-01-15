@@ -11,13 +11,23 @@ import graph.Node;
 public class BetterMutation {
     
     public void doMutation(Graph graph, Chromosome ch, int maxColor) {
+        
+        int p = (int) (Math.random() * ch.genes.length);
+        ch.genes[p] = (int) (Math.random() * maxColor);
+        int k = 0;
         for(Node node : graph.getNodes()) {
-            if(needMutation(node, ch) || Math.random() <= 0.05) {
+            if(needMutation(node, ch)) { //  || Math.random() <= 0.1
                 ch.genes[node.getIndex()] = getBestColor(node, ch, maxColor);
                 ch.unsetFitness();
                 ch.unsetNormalizedFitness();
+                k++;
+                if(k >= 3) {
+                    //return;
+                }
             }
         }
+        
+
     }
     
     private double arr[] = null;

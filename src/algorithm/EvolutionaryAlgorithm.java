@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class EvolutionaryAlgorithm {
 
-    private double Pc = 0.1;
+    private double Pc = 0.2;
     private double Pm = 0.9;
     
     private Graph graph = null;
@@ -37,7 +37,7 @@ public class EvolutionaryAlgorithm {
     }
     
     public void initiate() {
-        this.populationSize = graph.getNodes().size()  / 2; // toDo
+        this.populationSize = Math.max(10, graph.getNodes().size()  / 3); // toDo
         this.population.clear();
         new InitialPopulationGenerator(this.graph, this.population, this.populationSize, this.maxColor);
         new FintnessSetter(this.graph, this.population, maxColor);
@@ -121,7 +121,7 @@ public class EvolutionaryAlgorithm {
             doSelection();
             doCrossover();
             doMutation();
-            calcFitnesses(intermediatePopulation);
+            //calcFitnesses(intermediatePopulation);
             doReplacement();
             calcFitnesses(population);
 
@@ -132,7 +132,7 @@ public class EvolutionaryAlgorithm {
             }
 
 
-            Util.sort(population);
+            //Util.sort(population);
             population.remove(population.size() - 1);
             population.add(best.clone());
 

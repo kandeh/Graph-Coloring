@@ -37,10 +37,12 @@ public class FintnessSetter {
         } else {
             res = 1;
         }
+        res = Math.pow(res, 10);
 
+        
         int nodes = graph.getNodes().size();
         
-        return 0.98 * res + 0.02 * ((double) (nodes - Util.getColorsDef(ch, maxColor)) / nodes);
+        return 0.95 * res + 0.05 * Math.pow(((double) (nodes - Util.getColorsDef(ch, maxColor)) / nodes), 10);
     }
     
     
