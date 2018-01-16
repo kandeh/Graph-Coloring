@@ -11,8 +11,8 @@ import java.util.ArrayList;
 
 public class EvolutionaryAlgorithm {
 
-    private double Pc = 0.2;
-    private double Pm = 0.9;
+    private double Pc = 0.0;
+    private double Pm = 0.0;
     
     private Graph graph = null;
     private int populationSize = 0;
@@ -21,8 +21,12 @@ public class EvolutionaryAlgorithm {
     private ArrayList<Chromosome> population = new ArrayList<Chromosome>();
     private ArrayList<Chromosome> intermediatePopulation = new ArrayList<Chromosome>();
 
-    public EvolutionaryAlgorithm(Graph graph, int maxColor) {
+    private int generation = 0;
+    
+    public EvolutionaryAlgorithm(Graph graph, double Pc, double Pm, int maxColor) {
         this.graph = graph;
+        this.Pc = Pc;
+        this.Pm = Pm;
         this.maxColor = maxColor;
     }
     
@@ -43,6 +47,7 @@ public class EvolutionaryAlgorithm {
         new FintnessSetter(this.graph, this.population, maxColor);
         new FitnessNormalizer(this.population);
         best = getBest(population).clone();
+        generation = 1;
     }
     
     public void setPc(double Pc) {
@@ -137,6 +142,7 @@ public class EvolutionaryAlgorithm {
             population.add(best.clone());
 
             calcFitnesses(population);
+            generation++;
         }
         
 
@@ -144,13 +150,19 @@ public class EvolutionaryAlgorithm {
     }
     
     public Chromosome best = null;
-    
-    public void run() {
-        
+
+    @Override
+    public String toString() {
+        double bestFitness = 0;
+        if(best != null) {
+            bestFitness = best.getFitness();
+        }
+        if(Double.isNaN(best.getFitness())) {
+            bestFitness = 0;
+        }
+        return "Generation = " + generation + " | " + "Best Fitness = " + bestFitness;
     }
     
-    public void stop() {
-        
-    }
+    
     
 }
