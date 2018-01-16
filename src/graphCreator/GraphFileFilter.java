@@ -11,16 +11,16 @@ import javax.swing.filechooser.FileFilter;
 public class GraphFileFilter extends FileFilter {
     
     
-    public static final String EXTENTION = ".graph";
+    public static final String EXTENSION = ".graph";
     
     @Override
     public boolean accept(File f) {
-        return f.getName().endsWith(EXTENTION);
+        return f.getName().endsWith(EXTENSION);
     }
     
     @Override
     public String getDescription() {
-        return EXTENTION;
+        return EXTENSION;
     }
     
 }

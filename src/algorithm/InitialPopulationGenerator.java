@@ -11,15 +11,14 @@ import java.util.ArrayList;
 
 public class InitialPopulationGenerator {
 
-    private int maxColor = 0;
+    private int colors = 0;
     private int arr[] = null;
     
-    public InitialPopulationGenerator(Graph graph, ArrayList<Chromosome> popolationArray, int size, int maxColor) {
-        this.maxColor = maxColor;
-        arr = new int[maxColor];
-        int chromosomeLength = graph.getNodes().size();
+    public InitialPopulationGenerator(Graph graph, ArrayList<Chromosome> popolationArray, int size, int colors) {
+        this.colors = colors;
+        arr = new int[colors];
         while(size-- > 0) {
-            Chromosome ch = new Chromosome(chromosomeLength);
+            Chromosome ch = new Chromosome(graph, colors);
             for(Node node : graph.getNodes()) {
                 ch.genes[node.getIndex()] = -1;
             }
@@ -28,7 +27,6 @@ public class InitialPopulationGenerator {
             }
             popolationArray.add(ch);
         }
-        
     }
     
     private void setNodeColorInChromosome(Chromosome ch, Node node) {
@@ -43,14 +41,14 @@ public class InitialPopulationGenerator {
             }
         }
         if(limited == false) {
-            ch.genes[node.getIndex()] = 0;
+            ch.genes[node.getIndex()] = (int) (Math.random() * colors);
         } else {
 
-            for(int i = 0; i < maxColor; i++) {
+            for(int i = 0; i < colors; i++) {
                 arr[i] = 0;
             }
             for(Node toNode : node.edgesTo) {
-                for(int i = 0; i < maxColor; i++) {
+                for(int i = 0; i < colors; i++) {
                     if(i != ch.genes[toNode.getIndex()]) {
                         for(int k = 0; k < 1; k++) {
                             arr[i]++;
@@ -59,29 +57,29 @@ public class InitialPopulationGenerator {
                 }
             }
             int maxIndex = 0;
-            for(int i = 0; i < maxColor; i++) {
+            for(int i = 0; i < colors; i++) {
                 if(arr[i] > arr[maxIndex]) {
                     maxIndex = i;
                 }
             }
             
-            //ch.genes[node.getIndex()] = (int) (Math.random() * maxColor);
+            //ch.genes[node.getIndex()] = (int) (Math.random() * colors);
             //ch.genes[node.getIndex()] = 0;
             
-            if(Math.random() <= 1.0) {
+            if(Math.random() <= 0.7) {
                 ch.genes[node.getIndex()] = maxIndex;
             } else {
-                if(Math.random() <= 0.3) {
+                if(Math.random() <= 0.7) {
                     arr[maxIndex] = 0;
                     maxIndex = 0;
-                    for(int i = 0; i < maxColor; i++) {
+                    for(int i = 0; i < colors; i++) {
                         if(arr[i] > arr[maxIndex]) {
                             maxIndex = i;
                         }
                     }
                     ch.genes[node.getIndex()] = maxIndex;
                 } else {
-                    ch.genes[node.getIndex()] = (int) (Math.random() * maxColor);
+                    ch.genes[node.getIndex()] = (int) (Math.random() * colors);
                 }
             }
         }

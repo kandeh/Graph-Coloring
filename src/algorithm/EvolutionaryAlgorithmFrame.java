@@ -11,7 +11,6 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -36,8 +35,8 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
     private JPanel gdp = null;
     private EvolutionaryAlgorithm algorithm = null;
     
-    private final int maxColor = 10;
-    private double Pc = 0.2;
+    private final int colors = 4;
+    private double Pc = 0.04;
     private double Pm = 0.9;
     
     
@@ -46,12 +45,11 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
     private JButton nextGenerationBtn = new JButton("Next Generation");
     private JButton runBtn = new JButton("Run");
     private JButton stopBtn = new JButton("Stop");
-    private JLabel infoLabel = new JLabel();
         
     public void setPopulationDataModel() {
 
         synchronized(algorithm.getCurrentPopulation()) {
-            Util.sort(algorithm.getCurrentPopulation());
+            Util.sortDesc(algorithm.getCurrentPopulation());
             populationDataModel.clear();
             for(Chromosome ch : algorithm.getCurrentPopulation()) {
                 populationDataModel.addElement(ch);
@@ -61,7 +59,6 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
             repaint();
         }
     }
-    
     
     private void nextGeneration() {
         algorithm.nextGeneration();
@@ -88,7 +85,6 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
         }
     }
     
-    
     public EvolutionaryAlgorithmFrame(Graph graph) {
 
         this.graph = graph;
@@ -111,7 +107,7 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
         });
 
         JPanel buttonsPanel = new JPanel();
-   
+
         editGraphBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -129,12 +125,10 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 EvolutionaryAlgorithmFrame.this.nextGenerationBtn.setEnabled(true);
                 EvolutionaryAlgorithmFrame.this.runBtn.setEnabled(true);
-                algorithm = new EvolutionaryAlgorithm(graph, Pc, Pm, maxColor);
+                algorithm = new EvolutionaryAlgorithm(graph, Pc, Pm, colors);
                 algorithm.initiate();
                 setTitle(algorithm.toString());
                 setPopulationDataModel();
-                
-
             }
         });
         
@@ -184,14 +178,11 @@ public class EvolutionaryAlgorithmFrame extends JFrame {
             }
         });  
         
-        
         buttonsPanel.add(editGraphBtn);
         buttonsPanel.add(initialPopulationBtn);
         buttonsPanel.add(nextGenerationBtn);
         buttonsPanel.add(runBtn);
         buttonsPanel.add(stopBtn);
-        
-
         
         panel.add(pupulationScrollPane);
         

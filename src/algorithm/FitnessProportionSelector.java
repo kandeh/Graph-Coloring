@@ -9,9 +9,14 @@ import java.util.ArrayList;
 
 public class FitnessProportionSelector {
 
+    private double fitnessSum = 0;
+    
     public FitnessProportionSelector(ArrayList<Chromosome> from, ArrayList<Chromosome> to, int size) {
-        Util.sortByNormalizedFitness(from);
+        Util.sortDesc(from);
         
+        for(Chromosome ch : from) {
+            fitnessSum += ch.getFitness();
+        }
         
         while(size-- > 0) {
             to.add(select(from));
@@ -19,19 +24,14 @@ public class FitnessProportionSelector {
     }
     
     private Chromosome select(ArrayList<Chromosome> from) {
-        double r = Math.random();
-        //System.out.println("--------------------");
+        double r = Math.random() * fitnessSum;
         for(int i = 0; i < from.size(); i++) {
-            
             Chromosome ch = from.get(i);
-            r -= ch.getNormalizedFitness();
-            //r -= (Math.pow(ch.getNormalizedFitness(), 0.99));
+            r -= (ch.getFitness());
             if(r <= 1e-8) {
-                //System.out.println(i);
                 return ch;
             }
         }
-        //System.out.println("last");
         return from.get(from.size() - 1);
     }
         

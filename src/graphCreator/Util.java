@@ -12,15 +12,14 @@ import javax.swing.JFileChooser;
  *
  * @author Alireza
  */
+
 public class Util {
     
     public final static double INF = 1e80; 
     
-    
-    
     public static void saveGraph(Component parent, Graph graph) {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir") + "/graphs"));
         fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
         GraphFileFilter graphFileFilter = new GraphFileFilter();
         fileChooser.removeChoosableFileFilter(fileChooser.getFileFilter());
@@ -29,7 +28,7 @@ public class Util {
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
             if(graphFileFilter.accept(selectedFile) == false) {
-                selectedFile = new File(selectedFile.getName() + GraphFileFilter.EXTENTION);
+                selectedFile = new File(selectedFile.getName() + GraphFileFilter.EXTENSION);
             }
             try {
                 PrintWriter pw = new PrintWriter(selectedFile);
@@ -58,7 +57,7 @@ public class Util {
     public static Graph loadGraph(Component parent) {
         Graph graph = new Graph();
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir") + "/graphs"));
         fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
         fileChooser.setFileFilter(new GraphFileFilter());
         int result = fileChooser.showOpenDialog(parent);

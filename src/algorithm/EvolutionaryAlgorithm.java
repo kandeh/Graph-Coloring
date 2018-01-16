@@ -1,7 +1,6 @@
 package algorithm;
 
 import graph.Graph;
-import graph.Node;
 import java.util.ArrayList;
 
 /**
@@ -11,23 +10,23 @@ import java.util.ArrayList;
 
 public class EvolutionaryAlgorithm {
 
+    private int colors = 0;
     private double Pc = 0.0;
     private double Pm = 0.0;
     
     private Graph graph = null;
     private int populationSize = 0;
-    private int maxColor = 0;
-    
+
     private ArrayList<Chromosome> population = new ArrayList<Chromosome>();
     private ArrayList<Chromosome> intermediatePopulation = new ArrayList<Chromosome>();
 
     private int generation = 0;
     
-    public EvolutionaryAlgorithm(Graph graph, double Pc, double Pm, int maxColor) {
+    public EvolutionaryAlgorithm(Graph graph, double Pc, double Pm, int colors) {
         this.graph = graph;
         this.Pc = Pc;
         this.Pm = Pm;
-        this.maxColor = maxColor;
+        this.colors = colors;
     }
     
     public Chromosome getBest(ArrayList<Chromosome> from) {
@@ -41,11 +40,9 @@ public class EvolutionaryAlgorithm {
     }
     
     public void initiate() {
-        this.populationSize = Math.max(10, graph.getNodes().size()  / 3); // toDo
+        this.populationSize = Math.max(10, (int) (graph.getNodes().size()  / 2.75)); // toDo
         this.population.clear();
-        new InitialPopulationGenerator(this.graph, this.population, this.populationSize, this.maxColor);
-        new FintnessSetter(this.graph, this.population, maxColor);
-        new FitnessNormalizer(this.population);
+        new InitialPopulationGenerator(this.graph, this.population, this.populationSize, this.colors);
         best = getBest(population).clone();
         generation = 1;
     }
@@ -55,7 +52,7 @@ public class EvolutionaryAlgorithm {
     }
     
     public double getPc() {
-        return Pc;
+        return this.Pc;
     }
     
     public void setPm(double Pm) {
@@ -72,12 +69,10 @@ public class EvolutionaryAlgorithm {
     }
     
     private void doMutation() {
-        //SimpleMutation mutation = new SimpleMutation();
-        BetterMutation mutation = new BetterMutation();
+        Mutation mutation = new Mutation();
         for(Chromosome ch :intermediatePopulation) {
             if(p(Pm)) {
-                //mutation.doMutation(ch, maxColor);
-                mutation.doMutation(this.graph, ch, maxColor);
+                mutation.doMutation(this.graph, ch, colors);
             }
         }
     }
@@ -115,38 +110,23 @@ public class EvolutionaryAlgorithm {
         intermediatePopulation.clear();
     }
     
-    private void calcFitnesses(ArrayList<Chromosome> chs) {
-        FintnessSetter fs = new FintnessSetter(this.graph, chs, maxColor);
-        FitnessNormalizer fn = new FitnessNormalizer(chs);   
-    }
-    
     public void nextGeneration() {
-        
-        synchronized(this.population) {
+        synchronized(population) {
             doSelection();
             doCrossover();
             doMutation();
-            //calcFitnesses(intermediatePopulation);
             doReplacement();
-            calcFitnesses(population);
-
 
             Chromosome b = getBest(population);
             if(b.getFitness() > best.getFitness()) {
                 best = b.clone();
+            } else {
+                population.remove(0);
+                population.add(best.clone());
             }
 
-
-            //Util.sort(population);
-            population.remove(population.size() - 1);
-            population.add(best.clone());
-
-            calcFitnesses(population);
             generation++;
         }
-        
-
-        
     }
     
     public Chromosome best = null;
@@ -156,9 +136,9 @@ public class EvolutionaryAlgorithm {
         double bestFitness = 0;
         if(best != null) {
             bestFitness = best.getFitness();
-        }
-        if(Double.isNaN(best.getFitness())) {
-            bestFitness = 0;
+            if(Double.isNaN(best.getFitness())) {
+                bestFitness = 0;
+            }
         }
         return "Generation = " + generation + " | " + "Best Fitness = " + bestFitness;
     }
